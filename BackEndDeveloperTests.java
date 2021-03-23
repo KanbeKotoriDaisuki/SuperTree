@@ -1,3 +1,4 @@
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.Assert.*;
@@ -7,28 +8,41 @@ import java.util.NoSuchElementException;
 
 public class BackEndDeveloperTests {
 
-    BackendInterface toTest;
-    @BeforeEach
+    Backend toTest;
+    Hero heroToTest;
+    Hero heroToTest2;
+    @Before
     public void makeInstance(){
-        toTest = null;//replace when implementing
+        toTest = new Backend(); ;//replace when implementing
+        String[] x = new String[] {"Ammo","1","2","4","50","1","The GOAT"};
+        heroToTest = new Hero(x);
+        String[] y = new String[] {"Walrus","50","0","0","5","50","The other GOAT"};
+        heroToTest2 = new Hero(y);
+        int[] stats1 = {Integer.parseInt(x[1]),Integer.parseInt(x[2]),Integer.parseInt(x[3]) ,
+        		Integer.parseInt(x[4]), Integer.parseInt(x[5])};
+        toTest.addHero(x[0], stats1, x[6]);
+        int[] stats2 = {Integer.parseInt(y[1]),Integer.parseInt(y[2]),Integer.parseInt(y[3]) ,
+        		Integer.parseInt(y[4]), Integer.parseInt(y[5])};
+        toTest.addHero(y[0], stats2, y[6]);
 
     }
 
     @Test
     public void testGetStrength(){
-        SuperheroInterface heroToTest = null;
+        
         //Tests for correct handling of hero not in tree
         try{
-            toTest.getStrength(heroToTest);
+            toTest.getHero(heroToTest.getSuperheroName());
         }catch(NoSuchElementException e){
             System.out.print("Correctly Throws NoSuchElement");
         }
         catch(Exception f){
+        	f.printStackTrace();
             fail("Inncorrect Exception Thrown");
         }
-        SuperheroInterface heroToTest2 = null; //set to hero in tree
+        ; //set to hero in tree
         try {
-            assertEquals(50, toTest.getStrength(heroToTest2));
+            assertEquals(50, toTest.getHero(heroToTest2.getSuperheroName()));
         }
         catch(Exception e){
             fail("Exception thrown when trying to get strength based on hero");
@@ -37,7 +51,7 @@ public class BackEndDeveloperTests {
 
     @Test
     public void testGetHero(){
-        SuperheroInterface heroToTest = null;
+ 
         //Tests for correct handling of hero not in tree
         try{
             toTest.getHero(5000);
@@ -47,7 +61,7 @@ public class BackEndDeveloperTests {
         catch(Exception f){
             fail("Inncorrect Exception Thrown");
         }
-        SuperheroInterface heroToTest2 = null; //set to hero in tree
+
         try {
             assertEquals(50, toTest.getHero(50));
         }
@@ -88,7 +102,7 @@ public class BackEndDeveloperTests {
     public void testGetNumHeroes(){
         try{
             int number = toTest.getNumberOfHeroes();
-            assertEquals(number,8);
+            assertEquals(number,2);
         }catch(Exception e){
             fail("Exception thrown while getting number of heroes");
         }

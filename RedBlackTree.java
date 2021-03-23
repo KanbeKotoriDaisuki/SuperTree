@@ -205,7 +205,7 @@ public class RedBlackTree<T extends Comparable<T>> implements SortedCollectionIn
     					gP.isBlack = false;
     				}
     				
-    				if(!(newNode.isLeftChild())) { //Left Right Rotation
+    				else if(!(newNode.isLeftChild())) { //Left Right Rotation
     					this.rotate(newNode, parent);
     					Node<T> temp = parent;
     					parent = newNode;
@@ -222,7 +222,7 @@ public class RedBlackTree<T extends Comparable<T>> implements SortedCollectionIn
     					gP.isBlack = false;
     				}
     				
-    				if(newNode.isLeftChild()) {//Right Left rotation
+    				else if(newNode.isLeftChild()) {//Right Left rotation
     					this.rotate(newNode, parent);
     					Node<T> temp = parent;
     					parent = newNode;
@@ -233,11 +233,12 @@ public class RedBlackTree<T extends Comparable<T>> implements SortedCollectionIn
     				}
     			}
     		}
+    		if(uncleWasRed == true) { //if Uncle was red then gP was colored red so method is called recursivel on gP
+        		this.enforceRBTreePropertiesAfterInsert(gP);
+        	}
     	}
     	
-    	if(uncleWasRed == true) { //if Uncle was red then gP was colored red so method is called recursivel on gP
-    		this.enforceRBTreePropertiesAfterInsert(gP);
-    	}
+    	
     	
     }
    
@@ -321,6 +322,7 @@ public class RedBlackTree<T extends Comparable<T>> implements SortedCollectionIn
     		else if(parent.isLeftChild()) {
     			Node<T> temp = child;
     			Node<T> gP = parent.parent;
+    			parent.rightChild = child.leftChild;
     			if(child.leftChild != null) {
     				child.leftChild.parent = parent;
     			}

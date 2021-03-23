@@ -38,6 +38,10 @@ public class Backend implements BackendInterface {
     	}
 
     }
+    public Backend() {
+    	nameTree = new RedBlackTree<>();
+    	powerTree = new RedBlackTree<>();
+    }
 	@Override
     public SuperheroInterface getHero(String hero) throws NoSuchElementException {
         RedBlackTree.Node<namedHero> node = nameTree.root;
@@ -146,13 +150,35 @@ public class Backend implements BackendInterface {
 
     @Override
     public SuperheroInterface addHero(String name, int[] statistics, String description) throws IllegalArgumentException {
-        return null;
+        String[] info = new String[7];
+    	info[0] = name;
+    	for(int i = 0 ; i<statistics.length; ++ i) {
+    		info[i+1] = "" + statistics[i];
+    	}
+    	info[7] = description;
+    	SuperheroInterface toAdd = new Hero(info);
+    	namedHero namedToAdd = new namedHero(toAdd);
+    	powerTree.insert(toAdd);
+    	nameTree.insert(namedToAdd);
+    	return toAdd;
     }
 	
 	@Override
 	public SuperheroInterface editHero(String name, int[] statistics, String description)
 			throws InvalidParameterException {
-		// TODO Auto-generated method stub
+		try {
+		Hero toChange = (Hero)this.getHero(name);
+		Hero powerToChange = (Hero)this.getHero(statistics[5]);
+		for(int i = 1; i< 5; ++i) {
+		toChange.heroInfo[i] = ""+statistics[i];
+		powerToChange.heroInfo[i] = "" + statistics[i];
+		}
+		toChange.heroInfo[6] = description;
+		powerToChange.heroInfo[6] = description;
+		}
+		catch(Exception e) {
+			throw new InvalidParameterException();
+		}
 		return null;
 	}
 
