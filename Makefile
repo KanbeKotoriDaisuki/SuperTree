@@ -30,6 +30,7 @@ test: compile junit5.jar
 	javac -cp .:junit5.jar DataWranglerTests.java
 	javac -cp .:junit5.jar BackEndDeveloperTests.java
 	javac -cp .:junit5.jar TestFrontend.java
+	java -jar junit5.jar --class-path . --scan-class-path
 
 clear:
 	rm *.class
