@@ -1,5 +1,3 @@
-
-
 //import common.BackendInterface;
 //import common.SuperHeroInterface;
 import java.util.ArrayList;
@@ -9,6 +7,9 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * The frontend controller
+ */
 public class Frontend {
 
   private static final String TITLE = "Marvel Heroes";
@@ -42,33 +43,60 @@ public class Frontend {
     ERROR,
   }
 
+  // members used only for tests, keep it to null if not testing
   private Integer testWidth;
   private Integer testHeight;
 
+  // mode of the program, defaultly set to BASE
   private Mode mode = Mode.BASE;
   private ArrayList<String> arguments = new ArrayList<>();
 
+  /**
+   * This class only allow one instance existing at once.
+   */
   private Frontend() {}
 
+  /**
+   * The only instance of Frontend
+   * @return the only instance
+   */
   public static Frontend getInstance() {
     return singleton;
   }
 
+  /**
+   * Do not call it except in tests.
+   */
   public static void refreshInstance() {
     singleton = new Frontend();
   }
 
+  /**
+   * Set the backend used by the frontend.
+   * @param backend the backend to be set
+   * @return the frontend itself
+   */
   public Frontend setBackend(BackendInterface backend) {
     this.backend = backend;
     return this;
   }
 
+  /**
+   * Do not call this method.
+   * Initialize test width and height parameter to prevent initialization
+   * from env or user input.
+   */
   public Frontend setTestParams(int width, int height) {
     testWidth = width;
     testHeight = height;
     return this;
   }
 
+  /**
+   * Run the frontend by specifying the user input
+   * @param scanner the user input
+   * @return the frontend itself.
+   */
   public Frontend run(Scanner scanner) {
     if (backend == null) {
       return this;
@@ -120,9 +148,14 @@ public class Frontend {
     return this;
   }
 
+  /**
+   * The base mode of frontend
+   * @param vp
+   */
   protected void baseMode(Viewport vp) {
     DSLanguage language = new DSLanguage(mode.toString());
 
+    // declare command grammar
     language.addGrammar(
       "a(?:\\s+(?<option>a|b|c)\\s+(?<value>\"[^\"]*\"|\\S+))?",
       matcher -> {
@@ -168,6 +201,7 @@ public class Frontend {
       "Exit the program."
     );
 
+    // draw UI
     drawThenRestoreStyles(
       vp,
       () -> {
@@ -190,9 +224,14 @@ public class Frontend {
     language.execute(vp.pause(null));
   }
 
+  /**
+   * The get mode of the frontend
+   * @param vp
+   */
   protected void getMode(Viewport vp) {
     DSLanguage language = new DSLanguage(mode.toString());
 
+    // declare command grammar
     language.addGrammar(
       "a\\s+(?<name>\"[^\"]*\"|\\S+)",
       matcher -> {
@@ -240,6 +279,7 @@ public class Frontend {
       "Return to BASE mode."
     );
 
+    // draw UI
     drawThenRestoreStyles(
       vp,
       () -> {
@@ -329,9 +369,13 @@ public class Frontend {
     language.execute(vp.pause(null));
   }
 
+  /**
+   * The edit mode of the frontend
+   */
   protected void editMode(Viewport vp) {
     DSLanguage language = new DSLanguage(mode.toString());
 
+    // declare command grammar
     language.addGrammar(
       "a\\s+(?<name>\"[^\"]*\"|\\S+)",
       matcher -> {
@@ -390,6 +434,7 @@ public class Frontend {
       "Return to BASE mode and discard any change."
     );
 
+    // draw UI
     drawThenRestoreStyles(
       vp,
       () -> {
@@ -468,9 +513,14 @@ public class Frontend {
     language.execute(vp.pause(null));
   }
 
+  /**
+   * The display mode of the frontend.
+   * @param vp
+   */
   protected void displayMode(Viewport vp) {
     DSLanguage language = new DSLanguage(mode.toString());
 
+    // declare command grammar
     language.addGrammar(
       "a",
       matcher -> {
@@ -507,6 +557,7 @@ public class Frontend {
       "Return to BASE mode."
     );
 
+    // draw UI
     if (arguments.size() > 0) {
       LinkedList<SuperheroInterface> heroes;
 
@@ -548,6 +599,9 @@ public class Frontend {
     language.execute(vp.pause(null));
   }
 
+  /**
+   * The error mode of the frontend.
+   */
   protected void errorMode(Viewport vp) {
     boolean isInternalError = arguments.get(0).compareTo("internal") == 0;
     String errorMsg;
@@ -557,6 +611,7 @@ public class Frontend {
       errorMsg = arguments.get(1);
     }
 
+    // declare command grammar
     DSLanguage language = new DSLanguage(mode.toString());
 
     if (!isInternalError) {
@@ -568,7 +623,7 @@ public class Frontend {
           arguments.remove(1);
           arguments.remove(0);
         },
-        "Return to the previous page.\n"
+        "Return to the previous page."
       );
     }
     language.addGrammar(
@@ -576,9 +631,10 @@ public class Frontend {
       matcher -> {
         mode = null;
       },
-      "Exit program.\n"
+      "Exit program."
     );
 
+    // draw UI
     drawThenRestoreStyles(
       vp,
       () -> {
@@ -593,16 +649,25 @@ public class Frontend {
     language.execute(vp.pause(null));
   }
 
+  /**
+   * Prepare viewport for repaint
+   */
   private void prepareViewport(Viewport vp) {
     vp.reset();
     drawTitleBar(vp);
     drawCommandLine(vp);
   }
 
+  /**
+   * Clean everything from the viewport
+   */
   private void cleanViewport(Viewport vp) {
     vp.reset();
   }
 
+  /**
+   * Draw the title bar
+   */
   private void drawTitleBar(Viewport vp) {
     drawThenRestoreStyles(
       vp,
@@ -615,6 +680,9 @@ public class Frontend {
     );
   }
 
+  /**
+   * Draw a user manual for the current mode
+   */
   private void drawManual(Viewport vp, DSLanguage language) {
     drawThenRestoreStyles(
       vp,
@@ -629,6 +697,9 @@ public class Frontend {
     );
   }
 
+  /**
+   * Draw a hero on the screen
+   */
   private void drawHero(
     Viewport vp,
     String name,
@@ -669,6 +740,10 @@ public class Frontend {
     );
   }
 
+  /**
+   * Draw the user command line
+   * @param vp
+   */
   private void drawCommandLine(Viewport vp) {
     vp.setColors(CONTRAST, TERTIARY);
     vp.drawFilledRect(1, 0, 0, 0);
@@ -676,6 +751,12 @@ public class Frontend {
     vp.setCursorPosition(4, 0);
   }
 
+  /**
+   * Helper method that allows drawing without affecting the init color
+   * & style of viewport
+   * @param vp
+   * @param r
+   */
   private void drawThenRestoreStyles(Viewport vp, Runnable r) {
     Color fgColor = vp.getFgColor(), bgColor = vp.getBgColor();
     boolean isBold = vp.isBold(), isItalic = vp.italic();
@@ -685,6 +766,9 @@ public class Frontend {
     vp.setItalic(isItalic);
   }
 
+  /**
+   * Helper method to remove double quotes from user input
+   */
   private String removeQuotes(String input) {
     if (
       input.length() > 1 &&
@@ -695,6 +779,9 @@ public class Frontend {
     } else return input;
   }
 
+  /**
+   * Helper method to get the statistics array for hero
+   */
   private int[] statisticsArray(
     int speed,
     int strength,
@@ -704,7 +791,12 @@ public class Frontend {
     return new int[] { speed, strength, usefulness, intelligence };
   }
 
+  /**
+   * Calculate a hero's power base on the statistics array
+   * @param statistics
+   * @return
+   */
   private int calculatePower(int[] statistics) {
-    return statistics[0] + statistics[1] + statistics[2] + statistics[3];
+    return (statistics[0] + statistics[1] + statistics[2] + statistics[3]) / 4;
   }
 }

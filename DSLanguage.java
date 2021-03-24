@@ -5,11 +5,22 @@ import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Simple domain specific language
+ */
 public class DSLanguage {
 
+  /**
+   * An internal class for false user inputs
+   */
   @SuppressWarnings("serial")
   public class InvalidCommandException extends FrontendException {
 
+    /**
+     * Constructor that takes a command and a DSLanguage
+     * @param command
+     * @param language
+     */
     public InvalidCommandException(String command, DSLanguage language) {
       super(
         "Receives user command\n\"" +
@@ -32,10 +43,16 @@ public class DSLanguage {
 
   private String mode;
 
+  /**
+   * Constructor that binds the new language with a mode
+   */
   public DSLanguage(String mode) {
     this.mode = mode;
   }
 
+  /**
+   * Add a grammar to the language
+   */
   public void addGrammar(
     String grammar,
     Consumer<Matcher> action,
@@ -46,6 +63,10 @@ public class DSLanguage {
     descriptionList.add(description);
   }
 
+  /**
+   * Execute a command
+   * @param command
+   */
   public void execute(String command) {
     command = command.trim();
 
@@ -59,6 +80,9 @@ public class DSLanguage {
     throw new InvalidCommandException(command, this);
   }
 
+  /**
+   * Visualize the language for users.
+   */
   @Override
   public String toString() {
     String result = "";
@@ -75,6 +99,9 @@ public class DSLanguage {
     return result;
   }
 
+  /**
+   * Helper for visualize grammars of the language
+   */
   private static String grammarString(Pattern grammar) {
     String grammaString = grammar.toString();
 

@@ -3,16 +3,16 @@
 //import common.BackendInterface;
 //import common.SuperHeroInterface;
 
-//import java.io.StringReader;
-//import java.security.InvalidParameterException;
-//import java.util.LinkedList;
-//import java.util.NoSuchElementException;
-//import java.util.Scanner;
-//
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.Test;
-//import org.junit.jupiter.api.Timeout;
-//
+import java.io.StringReader;
+import java.util.Scanner;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
+
+/**
+ * Tests for class Frontend
+ */
 public class TestFrontend {
 
 //  public static class DummyHero implements SuperheroInterface {
@@ -173,44 +173,53 @@ public class TestFrontend {
 //    }
 //  }
 //
-//  private BackendInterface backend;
+ private BackendInterface backend;
 
-	
-//
-//  @BeforeEach
-//  public void initialize() {
-////    Hero.resetCounter();
-//    Backend backend = new Backend(null);
-//    Frontend.refreshInstance();
-//  }
-//
-//  @Test
-//  @Timeout(1)
-//  public void testExit() {
-//    Frontend
-//      .getInstance()
-//      .setTestParams(10, 10)
-//      .setBackend(backend)
-//      .run(new Scanner(new StringReader("x\n")));
-//  }
-//
-//  @Test
-//  @Timeout(1)
-//  public void testBase() {
-//    Frontend
-//      .getInstance()
-//      .setTestParams(10, 10)
-//      .setBackend(backend)
-//      .run(new Scanner(new StringReader("a\nx\nx\n")));
-//  }
-//
-//  @Test
-//  @Timeout(1)
-//  public void testError() {
-//    Frontend
-//      .getInstance()
-//      .setTestParams(10, 10)
-//      .setBackend(backend)
-//      .run(new Scanner(new StringReader("nosuchcommand\na\nx\n")));
-//  }
+/**
+ * Prepare the backend that is taken by frontend to test its functionality
+ */
+ @BeforeEach
+ public void initialize() {
+   backend = new Backend();
+   Frontend.refreshInstance();
+ }
+
+ /**
+  * Test if exit works fine
+  */
+ @Test
+ @Timeout(1)
+ public void testExit() {
+   Frontend
+     .getInstance()
+     .setTestParams(10, 10)
+     .setBackend(backend)
+     .run(new Scanner(new StringReader("x\n")));
+ }
+
+ /**
+  * Test if base mode correctly exits
+  */
+ @Test
+ @Timeout(1)
+ public void testBase() {
+   Frontend
+     .getInstance()
+     .setTestParams(10, 10)
+     .setBackend(backend)
+     .run(new Scanner(new StringReader("a\nx\nx\n")));
+ }
+
+ /**
+  * Test if an invalid command result in a recoverable error.
+  */
+ @Test
+ @Timeout(1)
+ public void testError() {
+   Frontend
+     .getInstance()
+     .setTestParams(10, 10)
+     .setBackend(backend)
+     .run(new Scanner(new StringReader("nosuchcommand\na\nx\n")));
+ }
 }

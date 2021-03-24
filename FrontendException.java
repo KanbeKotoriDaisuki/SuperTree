@@ -1,5 +1,8 @@
 //package frontend;
 
+/**
+ * Exceptions that derives from user behavior
+ */
 @SuppressWarnings("serial")
 public class FrontendException extends RuntimeException {
 

@@ -3,6 +3,9 @@
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ * Viewport for the frontend
+ */
 public class Viewport implements AutoCloseable {
 
   private static Viewport singleton = new Viewport();
@@ -24,14 +27,25 @@ public class Viewport implements AutoCloseable {
     System.out.println("\u001b[?1049h\u001b[H");
   }
 
+  /**
+   * Coordinate helper
+   * @param x
+   * @return
+   */
   private int realX(int x) {
     return (x <= 0) ? width + x : x;
   }
 
+  /**
+   * Coordinate helper
+   */
   private int realY(int y) {
     return (y <= 0) ? height + y : y;
   }
 
+  /**
+   * Get the single instance of the viewport
+   */
   public static Viewport getInstance() {
     if (singleton == null) {
       throw new RuntimeException(
@@ -41,6 +55,12 @@ public class Viewport implements AutoCloseable {
     return singleton;
   }
 
+  /**
+   * Initialize the viewport
+   * @param width if null, try env & user input
+   * @param height if null, try env & user input
+   * @param scanner source of user input for this viewport
+   */
   public static void initialize(
     Integer width,
     Integer height,
@@ -67,6 +87,9 @@ public class Viewport implements AutoCloseable {
     singleton.reset();
   }
 
+  /**
+   * Clear everything from the screen, use alternative scroll buffer
+   */
   public void reset() {
     // reset text styles
     System.out.print("\u001b[0m");
@@ -76,6 +99,11 @@ public class Viewport implements AutoCloseable {
     System.out.print("\u001b[H");
   }
 
+  /**
+   * Pause for an user input
+   * @param msg
+   * @return
+   */
   public String pause(String msg) {
     if (msg != null) {
       System.out.print(msg);
@@ -84,6 +112,9 @@ public class Viewport implements AutoCloseable {
     return result;
   }
 
+  /**
+   * Close the viewport, return to main scroll buffer
+   */
   @Override
   public void close() {
     System.out.println("\u001b[?1049l");
@@ -145,6 +176,12 @@ public class Viewport implements AutoCloseable {
     }
   }
 
+  /**
+   * Set the cursor to position x:y.
+   * @param x
+   * @param y
+   * @return
+   */
   public boolean setCursorPosition(int x, int y) {
     x = realX(x);
     y = realY(y);
@@ -164,6 +201,13 @@ public class Viewport implements AutoCloseable {
     System.out.print("\u001b[u");
   }
 
+  /**
+   * Draw a filled rectangle with by a pair of points.
+   * @param x1
+   * @param y1
+   * @param x2
+   * @param y2
+   */
   public void drawFilledRect(int x1, int y1, int x2, int y2) {
     x1 = realX(x1);
     y1 = realY(y1);
@@ -182,6 +226,12 @@ public class Viewport implements AutoCloseable {
     restoreCursorPosition();
   }
 
+  /**
+   * Draw a single line of text
+   * @param x
+   * @param y
+   * @param msg
+   */
   public void drawSingleLineText(int x, int y, String msg) {
     x = realX(x);
     y = realY(y);
@@ -193,9 +243,19 @@ public class Viewport implements AutoCloseable {
     restoreCursorPosition();
   }
 
+  /**
+   * Draw many lines of text with a specific width
+   * @param x
+   * @param y
+   * @param width
+   * @param msg
+   * @return the height of the texts
+   */
   public int drawMultiLineText(int x, int y, int width, String msg) {
     x = realX(x);
     y = realY(y);
+
+    if (width <= 0) return 0;
 
     // process msg
     ArrayList<String> tokens = new ArrayList<>();
