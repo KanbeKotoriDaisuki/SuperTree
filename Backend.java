@@ -39,8 +39,8 @@ public class Backend implements BackendInterface {
             for (int i = 0; i < heroList.size(); ++i) {
                 SuperheroInterface toInsert = heroList.get(i);
                 powerTree.insert(toInsert);
-                System.out.println(i);
-                System.out.println(heroList.get(i));
+                // System.out.println(i);
+                // System.out.println(heroList.get(i));
                 nameTree.insert(new namedHero(toInsert));
             }
         }
